@@ -8,6 +8,7 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
+var url = require('url');
 
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
@@ -36,7 +37,37 @@ app.route('/_api/package.json')
 app.route('/')
     .get(function(req, res) {
 		  res.sendFile(process.cwd() + '/views/index.html');
-    })
+    });
+
+app.get('/*', function(req, res) {
+  let urlRequest = url.parse(req.url, true);
+  let newDate;
+  let pathName;
+  let jsonTime;
+  let months = ["Jan", "Feb", "March", "April", "May", "June", "July", "August", "Sep", "Oct", "Nov", "Dec"];
+  let month;
+  let year;
+  pathName = urlRequest.pathname;
+  pathName = urlRequest.pathname.slice(1, pathName.length);
+  if (!(isNaN(pathName))) {
+    newDate = new Date(pathName * 1000);
+  } else {
+    newDate = new Date(decodeURI(pathName));
+  }
+  month = months[newDate.getMonth()];
+  year = newDate.getFullYear();
+  if (!(isNaN(newDate.getTime()))) {
+    let jsonTime = {
+      "unix": newDate.getTime() / 1000,
+      "natural": `${month} ${newDate.getDay()}, ${year}`
+    };
+    res.writeHead(200, {'Content-Type': 'application/json' });
+    res.write(JSON.stringify(jsonTime));
+    res.end();
+  } else {
+    res.end();
+  }
+});
 
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
