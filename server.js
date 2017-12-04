@@ -65,6 +65,12 @@ app.get('/*', function(req, res) {
     res.write(JSON.stringify(jsonTime));
     res.end();
   } else {
+    let jsonTime = {
+      "unix": null,
+      "natural": null
+    };
+    res.writeHead(200, {'Content-Type': 'application/json' });
+    res.write(JSON.stringify(jsonTime));
     res.end();
   }
 });
