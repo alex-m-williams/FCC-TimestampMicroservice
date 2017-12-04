@@ -1,2 +1,5 @@
 [core]
 	excludesfile = /etc/.gitignore-global
+[user]
+	email = alexwilliams567@gmail.com
+	name = Alex Williams
